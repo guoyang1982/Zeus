@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="Job">
+	
+	<typeAlias alias="job" type="com.gy.sched.common.domain.store.Job" />
+	
+	<resultMap id="jobResultMap" class="job">
+		<result property="id" 					column="id"/>
+		<result property="gmtCreate" 			column="gmt_create"/>
+		<result property="gmtModified" 			column="gmt_modified"/>
+		<result property="appId" 		        column="app_id"/>
+		<result property="description" 			column="description"/>
+		<result property="createrId" 			column="creater_id"/>
+		<result property="type" 				column="type"/>
+		<result property="cronExpression"		column="cron_expression"/>
+		<result property="jobProcessor" 		column="job_processor"/>
+		<result property="jobArguments" 		column="job_arguments"/>
+		<result property="status" 				column="status"/>
+		<result property="taskName" 			column="task_name"/>
+	</resultMap>
+	
+	<sql id="jobColumns">
+		id, 
+		gmt_create, 
+		gmt_modified,
+		app_id,
+		description, 
+		creater_id,
+		type,
+		cron_expression,
+		job_processor,
+		job_arguments,
+		status,
+		task_name
+    </sql>
+	
+	<insert id="insert">
+		insert 
+			into 
+		job(
+			gmt_create, 
+			gmt_modified, 
+	    	app_id,
+			description,
+			creater_id,
+			type,
+			cron_expression,
+			job_processor,
+			job_arguments,
+			status,
+			task_name
+		) values (
+			NOW(), 
+			NOW(), 
+			#appId#,
+			#description#,
+			#createrId#,
+			#type#,
+			#cronExpression#,
+			#jobProcessor#,
+			#jobArguments#,
+			#status#,
+			#taskName#
+		)
+		<selectKey resultClass="long" keyProperty="id">    
+			<![CDATA[SELECT LAST_INSERT_ID() AS ID ]]>  
+		</selectKey>    
+	</insert>
+
+	<select id="query" resultMap="jobResultMap">
+		select
+		<include refid="jobColumns" />
+		from
+		job
+	</select>
+	
+	<select id="queryJobById" resultMap="jobResultMap">
+		select 
+			<include refid="jobColumns" /> 
+		from 
+			job
+		where 
+			id = #id#
+	</select>
+
+	<select id="queryJobByAppIdAndEx" resultMap="jobResultMap">
+		select
+		<include refid="jobColumns" />
+		from
+		job
+		where
+		app_id = #appId# and cron_expression = #cronExpression#
+	</select>
+
+	
+	<update id="update">
+		update 
+			dts_job 
+		set 
+			gmt_modified = now(),
+			description = #description#,
+			type = #type#,
+			cron_expression = #cronExpression#,
+			job_processor = #jobProcessor#,
+		where
+			id = #id#
+	</update>
+	
+	<delete id="delete">
+		delete 
+		from 
+			job
+		where 
+			id = #id#
+	</delete>
+	
+</sqlMap>

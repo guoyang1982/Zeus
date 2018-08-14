@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="App">
+	
+	<typeAlias alias="app" type="com.gy.sched.common.domain.store.App" />
+	
+	<resultMap id="appResultMap" class="app">
+		<result property="id" 					column="id"/>
+		<result property="gmtCreate" 			column="gmt_create"/>
+		<result property="gmtModified" 			column="gmt_modified"/>
+		<result property="appName" 		        column="app_name"/>
+		<result property="ip" 			column="ip"/>
+	</resultMap>
+	
+	<sql id="appColumns">
+		id, 
+		gmt_create, 
+		gmt_modified,
+		app_name,
+		ip
+    </sql>
+	
+	<insert id="insert">
+		insert 
+			into 
+		app_info(
+			id,
+			gmt_create,
+			gmt_modified,
+			app_name,
+			ip
+		) values (
+			NOW(), 
+			NOW(), 
+			#appName#,
+			#ip#
+		)
+		<selectKey resultClass="long" keyProperty="id">    
+			<![CDATA[SELECT LAST_INSERT_ID() AS ID ]]>  
+		</selectKey>    
+	</insert>
+
+	<select id="query" resultMap="appResultMap">
+		select
+		<include refid="appColumns" />
+		from
+		app_info
+	</select>
+	
+	<select id="queryAppByName" resultMap="appResultMap">
+		select 
+			<include refid="appColumns" />
+		from 
+			app_info
+		where
+		app_name = #appName#
+	</select>
+	
+</sqlMap>
